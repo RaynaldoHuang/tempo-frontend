@@ -1,5 +1,5 @@
 import { Check, ChevronRight, CircleDot } from 'lucide-react'
-import { pointLabel, statuses } from '@/lib/padel'
+import { deuceLabel, isGoldenPoint, pointLabel, statuses } from '@/lib/padel'
 import type { Match } from '@/lib/padel'
 
 function Tag({ status }: { status: string }) { return <span className={`tag ${status}`}><i />{statuses[status] || status}</span> }
@@ -15,7 +15,7 @@ export function ScoreCard({ court, match, tier, nextMatch, nextTier, queueCount 
         <strong className="game-score">{match.state.mode === 'super' || match.state.winner !== null ? '–' : match.state.games[team]}</strong>
         <strong className="point-score">{match.state.winner !== null ? (match.state.winner === team ? 'W' : '–') : pointLabel(match, team)}</strong>
       </div>)}
-      <footer>{match.state.winner !== null ? 'Hasil akhir' : match.state.mode === 'super' ? 'SUPER TIE-BREAK' : match.state.mode === 'tiebreak' ? 'TIE-BREAK' : `SET ${match.state.sets.length + 1}`}<span>{match.rules.golden_point ? 'Golden point' : 'Advantage'}{onClick && <ChevronRight size={14} />}</span></footer>
+      <footer>{match.state.winner !== null ? 'Hasil akhir' : match.state.mode === 'super' ? 'SUPER TIE-BREAK' : match.state.mode === 'tiebreak' ? 'TIE-BREAK' : `SET ${match.state.sets.length + 1}`}<span>{isGoldenPoint(match) ? 'Golden point sekarang' : deuceLabel(match.rules)}{onClick && <ChevronRight size={14} />}</span></footer>
     </> : <div className="court-idle"><CircleDot size={35} /><p>Menunggu pertandingan</p><small>Pertandingan berikutnya akan tampil di sini.</small></div>}
     <section className="court-next" aria-label="Pertandingan berikutnya"><div className="next-heading"><span>NEXT MATCH</span>{queueCount > 1 && <small>+{queueCount - 1} antrean</small>}</div>{nextMatch ? <><div className="next-teams"><span>{nextMatch.team_a}</span><small>vs</small><span>{nextMatch.team_b}</span></div><p className="next-meta">{nextTier} · {nextMatch.group_name}</p></> : <p className="next-empty">Belum ada pertandingan berikutnya</p>}</section>
   </article>

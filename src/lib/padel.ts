@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-export type Rules = { regular_sets: number; games_to_win: number; golden_point: boolean; tiebreak_at?: number | null; tiebreak_win_by_two?: boolean; tiebreak_points: number; super_points: number }
+export type Rules = { regular_sets: number; games_to_win: number; golden_point: boolean; deuce_rule?: 'advantage' | 'golden' | 'one_advantage'; tiebreak_at?: number | null; tiebreak_win_by_two?: boolean; tiebreak_points: number; super_points: number }
 export type User = { id: number; name: string; email: string; role: 'admin' | 'referee' }
 export type Venue = { is_active: boolean; id: number; name: string }
 export type Tournament = { venue_id: number | null; id: number; name: string; venue: string; date: string }
@@ -54,7 +54,17 @@ export function pointLabel(match: Match, team: number) {
   if (p[team] >= 3 && p[1 - team] >= 3) return p[team] > p[1 - team] ? 'AD' : '40'
   return ['0', '15', '30', '40'][Math.min(p[team], 3)]
 }
-export function rulesLabel(rules: Rules) { return `${rules.regular_sets === 1 ? '1 set' : '2 set + STB ' + rules.super_points} · ${rules.games_to_win} game · ${rules.golden_point ? 'Golden point' : 'Advantage'} · TB ${rules.tiebreak_at ?? rules.games_to_win}–${rules.tiebreak_at ?? rules.games_to_win}, ${rules.tiebreak_points} poin${rules.tiebreak_win_by_two === false ? ' tanpa selisih 2' : ' selisih 2'}` }
+export function deuceRule(rules: Rules) { return rules.deuce_rule ?? (rules.golden_point ? 'golden' : 'advantage') }
+export function deuceLabel(rules: Rules) {
+  const rule = deuceRule(rules)
+  return rule === 'one_advantage' ? '1 advantage → golden point' : rule === 'golden' ? 'Golden point' : 'Advantage'
+}
+export function isGoldenPoint(match: Match) {
+  const rule = deuceRule(match.rules)
+  const threshold = rule === 'golden' ? 3 : rule === 'one_advantage' ? 4 : Infinity
+  return match.state.mode === 'regular' && match.state.winner === null && match.state.points[0] === match.state.points[1] && match.state.points[0] >= threshold
+}
+export function rulesLabel(rules: Rules) { return `${rules.regular_sets === 1 ? '1 set' : '2 set + STB ' + rules.super_points} · ${rules.games_to_win} game · ${deuceLabel(rules)} · TB ${rules.tiebreak_at ?? rules.games_to_win}–${rules.tiebreak_at ?? rules.games_to_win}, ${rules.tiebreak_points} poin${rules.tiebreak_win_by_two === false ? ' tanpa selisih 2' : ' selisih 2'}` }
 
 export type Submit = (path: string, body: unknown, method?: string) => Promise<boolean>
 

@@ -3,7 +3,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import { Activity, ArrowRight, Check, ChevronRight, CircleDot, ClipboardList, Clock3, Eye, EyeOff, LayoutDashboard, Monitor, Plus, Radio, ShieldCheck, Trophy, Undo2, X } from 'lucide-react'
-import { api, courtSchedule, defaults, pointLabel, rulesLabel, statuses, uid, useLive } from '@/lib/padel'
+import { api, courtSchedule, defaults, isGoldenPoint, pointLabel, rulesLabel, statuses, uid, useLive } from '@/lib/padel'
 import type { Data, Match, User } from '@/lib/padel'
 import { TempoLogo } from '@/components/shared/tempo-logo'
 import { AdminLayout } from '@/layouts/admin-layout'
@@ -75,6 +75,7 @@ function Scorer({ match, court, online, admin, onClose, refresh, canStart = true
   return <section className={`mx-auto w-full max-w-2xl space-y-4 ${preview ? '[&_button:disabled]:opacity-100' : ''}`}>
     <div className="flex items-center justify-between gap-4"><div><p className="text-sm text-muted-foreground">Panel wasit / {court}</p><h2 className="text-lg font-semibold">{match.group_name}</h2></div>{onClose && <Button variant="ghost" size="icon" aria-label="Tutup" onClick={onClose}><X /></Button>}</div>
     <AdminCourtCard court={court} match={match} />
+    {['live', 'paused'].includes(match.status) && isGoldenPoint(match) && <Alert><AlertDescription>Golden point · poin berikutnya langsung menentukan pemenang game.</AlertDescription></Alert>}
     {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
     {!online && <Alert variant="destructive"><AlertDescription>Input dikunci sampai koneksi kembali. Poin yang belum dikirim tidak disimpan otomatis.</AlertDescription></Alert>}
     {match.status === 'scheduled' && <Card><CardContent className="space-y-4"><Field label="Urutan servis pertama"><AppSelect className="w-full" value={server} onValueChange={value => setServer(Number(value))} options={[`${match.team_a} · pemain 1`, `${match.team_b} · pemain 1`, `${match.team_a} · pemain 2`, `${match.team_b} · pemain 2`].map((label, value) => ({ value, label }))} /></Field><p className="text-xs leading-relaxed text-muted-foreground">Rotasi berikutnya: A1 → B1 → A2 → B2. Pastikan urutan pemain sebelum mulai.</p>{!canStart && <p className="text-sm text-muted-foreground">Pertandingan ini masih menunggu giliran. Selesaikan pertandingan sebelumnya terlebih dahulu.</p>}<Button className="w-full" disabled={disabled || !canStart} onClick={() => void act('start')}><Activity />Mulai pertandingan</Button></CardContent></Card>}
