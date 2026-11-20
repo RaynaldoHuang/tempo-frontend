@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
-import { courtSchedule } from '@/lib/padel'
+import { courtSchedule, queueMatches } from '@/lib/padel'
 import { CircleDot, Smartphone, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import type { Data, Submit } from '@/lib/padel'
@@ -20,7 +20,7 @@ export function AssignmentsPage({ data, submit, busy }: { data: Data; submit: Su
     <AppSelect className="w-full sm:w-72" aria-label="Filter venue penugasan" value={venue} onValueChange={value => setParams(value ? { venue: value } : {})} options={[{ value: '', label: 'Semua venue' }, ...data.venues.map(item => ({ value: item.id, label: item.name }))]} />
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{courts.map(court => {
       const referee = data.referees.find(user => user.id === court.referee_id)
-      const current = courtSchedule(data.matches, court.id).current
+      const current = courtSchedule(queueMatches(data), court.id).current
       const match = current?.status === 'finished' ? undefined : current
       return <Card key={court.id}><CardHeader><div className="flex items-center justify-between gap-2"><CardTitle className="flex items-center gap-2"><CircleDot className="size-4 text-muted-foreground" />{court.name}</CardTitle><Badge variant={referee ? 'default' : 'secondary'}>{referee ? 'Ditugaskan' : 'Menunggu'}</Badge></div><CardDescription>{data.venues.find(venue => venue.id === court.venue_id)?.name} · {match ? `${match.team_a} vs ${match.team_b}` : 'Belum ada pertandingan terjadwal'}</CardDescription></CardHeader><CardContent className="space-y-3 border-t pt-5"><Field label="Wasit bertugas"><AppSelect className="w-full" aria-label={`Wasit ${court.name}`} value={court.referee_id || ''} disabled={busy} onValueChange={value => void submit(`/courts/${court.id}`, { referee_id: value ? Number(value) : null }, 'PATCH')} options={[{ value: '', label: 'Belum ditugaskan' }, ...data.referees.map(user => ({ value: user.id, label: user.name, disabled: data.courts.some(other => other.id !== court.id && other.referee_id === user.id) }))]} /></Field><p className="text-xs text-muted-foreground">{referee?.email || 'Pilih akun wasit untuk mengaktifkan pencatatan skor.'}</p></CardContent></Card>
     })}</div>
