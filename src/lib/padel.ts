@@ -2,16 +2,17 @@ import { useCallback, useEffect, useState } from 'react'
 
 export type Rules = { regular_sets: number; games_to_win: number; golden_point: boolean; tiebreak_at?: number | null; tiebreak_win_by_two?: boolean; tiebreak_points: number; super_points: number }
 export type User = { id: number; name: string; email: string; role: 'admin' | 'referee' }
-export type Tournament = { id: number; name: string; venue: string; date: string }
+export type Venue = { id: number; name: string }
+export type Tournament = { venue_id: number | null; id: number; name: string; venue: string; date: string }
 export type Tier = { knockout?: { confirmed_at?: string; draw_mode?: 'ordered' | 'random' } | null; id: number; tournament_id: number; name: string; format: string; rules: Rules; groups: { name: string; teams: string[] }[] }
 export type Preset = { id: number; name: string; rules: Rules }
 export type Match = { id: number; tier_id: number; court_id: number | null; queue_position: number | null; group_name: string; team_a: string; team_b: string; status: string; version: number; finished_at?: string | null; rules: Rules; state: { points: number[]; games: number[]; sets: { games: number[]; kind: string; winner: number }[]; mode: string; server: number; winner: number | null } }
-export type Court = { id: number; name: string; referee_id: number | null }
-export type Data = { user: User; tournaments: Tournament[]; tiers: Tier[]; presets: Preset[]; referees: User[]; courts: Court[]; matches: Match[] }
+export type Court = { venue_id: number | null; id: number; name: string; referee_id: number | null }
+export type Data = { venues: Venue[]; user: User; tournaments: Tournament[]; tiers: Tier[]; presets: Preset[]; referees: User[]; courts: Court[]; matches: Match[] }
 export type BoardStanding = { tier_id: number; tier_name: string; tournament_name: string | null; group_name: string; qualifiers: number; confirmed: boolean; complete: boolean; unresolved: boolean; rows: { team: string; played: number; wins: number; sets: number; games: number }[] }
 export type BoardKnockoutEntry = { team_a: string | null; team_b: string | null; label_a: string; label_b: string; winner: string | null; bye: boolean; status: string; court_name: string | null; sets: number[][]; points: number[]; games: number[]; mode: string }
 export type BoardKnockout = { tier_id: number; tier_name: string; tournament_name: string | null; round_name: string; champion: string | null; entries: BoardKnockoutEntry[] }
-export type Board = { knockouts?: BoardKnockout[]; standings?: BoardStanding[]; tournaments: Tournament[]; courts: { id: number; name: string; match: Match | null; tier: { name: string; tournament_id: number } | null; next_match: Match | null; next_tier: { name: string; tournament_id: number } | null; queue_count: number }[] }
+export type Board = { venues?: Venue[]; knockouts?: BoardKnockout[]; standings?: BoardStanding[]; tournaments: Tournament[]; courts: { venue_id?: number | null; venue_name?: string | null; id: number; name: string; match: Match | null; tier: { name: string; tournament_id: number } | null; next_match: Match | null; next_tier: { name: string; tournament_id: number } | null; queue_count: number }[] }
 export const defaults: Rules = { regular_sets: 2, games_to_win: 6, golden_point: false, tiebreak_points: 7, tiebreak_win_by_two: true, super_points: 10 }
 export const statuses: Record<string, string> = { scheduled: 'Terjadwal', live: 'Berlangsung', paused: 'Jeda', review: 'Konfirmasi hasil', finished: 'Selesai' }
 export function uid() {

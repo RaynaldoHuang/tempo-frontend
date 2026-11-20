@@ -1,4 +1,4 @@
-import { CircleDot, ClipboardList, GitBranch, Layers, LayoutDashboard, Monitor, Settings, Settings2, ShieldCheck, Trophy, Users } from "lucide-react"
+import { CircleDot, ClipboardList, GitBranch, Layers, LayoutDashboard, MapPin, Monitor, Settings, Settings2, ShieldCheck, Trophy, Users } from "lucide-react"
 
 export const navigation = [
   {
@@ -19,6 +19,7 @@ export const navigation = [
   {
     title: "Master Data",
     items: [
+      { title: "Venue", href: "/admintempo/master-data/venues", icon: MapPin },
       { title: "Court", href: "/admintempo/master-data/courts", icon: CircleDot },
       { title: "Wasit", href: "/admintempo/master-data/referees", icon: Users },
       { title: "Preset skor", href: "/admintempo/master-data/presets", icon: Settings2 },

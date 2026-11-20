@@ -198,3 +198,5 @@
 .padel-live .tv-ko-champion > svg { width: clamp(28px, 2.5vw, 60px); height: clamp(28px, 2.5vw, 60px); color: var(--tv-accent); stroke-width: 1.5; }
 .padel-live .tv-ko-champion > p { margin: 0; font-size: clamp(18px, 1.5vw, 40px); line-height: 1.2; font-weight: 650; overflow-wrap: anywhere; }
 .padel-live .tv-ko-champion > span { font-size: clamp(9px, .6vw, 16px); color: var(--tv-secondary); }
+
+.padel-live .tv-venue-select { max-width: 100%; margin-top: 8px; border: 1px solid var(--tv-border); border-radius: 6px; background: #fafcfb; padding: 4px 8px; color: var(--tv-secondary); font-size: clamp(10px, .65vw, 16px); cursor: pointer; }

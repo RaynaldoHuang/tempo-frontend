@@ -12,6 +12,7 @@ import {
 const labels: Record<string, string> = {
     admintempo: "Admin Tempo",
     dashboard: "Dashboard",
+    venues: "Venue",
     progression: "Klasemen & knockout",
     competitions: "Turnamen & tier",
     "master-data": "Master Data",

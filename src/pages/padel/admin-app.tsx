@@ -29,6 +29,7 @@ const TiersPage = lazy(() => import('@/pages/padel/tiers-page').then(module => (
 const RefereesPage = lazy(() => import('@/pages/padel/referees-page').then(module => ({ default: module.RefereesPage })))
 const PresetsPage = lazy(() => import('@/pages/padel/presets-page').then(module => ({ default: module.PresetsPage })))
 const AssignmentsPage = lazy(() => import('@/pages/padel/assignments-page').then(module => ({ default: module.AssignmentsPage })))
+const VenuesPage = lazy(() => import('@/pages/padel/venues-page').then(module => ({ default: module.VenuesPage })))
 const CourtsPage = lazy(() => import('@/pages/padel/master-data-page').then(module => ({ default: module.CourtsPage })))
 const MasterDataPage = lazy(() => import('@/pages/padel/master-data-page').then(module => ({ default: module.MasterDataPage })))
 const ProgressionPage = lazy(() => import('@/pages/padel/progression-page').then(module => ({ default: module.ProgressionPage })))
@@ -117,7 +118,7 @@ function Overview({ data, open }: { data: Data; open: (id: number) => void }) {
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><StatCard title="Total court" value={String(data.courts.length)} icon={LayoutDashboard} /><StatCard title="Sedang bertanding" value={String(active.length)} icon={Activity} /><StatCard title="Pertandingan selesai" value={String(data.matches.filter(m => m.status === 'finished').length)} icon={ShieldCheck} /><StatCard title="Total pertandingan" value={String(data.matches.length)} icon={ClipboardList} /></div>
     {!data.tournaments.length && <Card><CardContent className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center"><div><h2 className="text-sm font-semibold">Siapkan turnamen pertama</h2><p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground">Mulai dari turnamen, tambahkan tier dan peserta, lalu tempatkan pertandingan serta wasit ke court.</p></div><Button variant="outline" className="h-9 shrink-0" render={<Link to="/admintempo/tournaments" />}>Buat turnamen<ArrowRight /></Button></CardContent></Card>}
     <div className="flex items-center justify-between gap-4"><div><h2 className="text-lg font-semibold tracking-tight">Live courts</h2><p className="mt-1 text-sm text-muted-foreground">Pantau skor dan kesiapan setiap lapangan.</p></div><Badge variant="outline"><Radio className="size-3" />{data.courts.length} court</Badge></div>
-    <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">{data.courts.map(court => { const { current: match, next } = courtSchedule(data.matches, court.id); return <AdminCourtCard key={court.id} court={court.name} match={match} tier={data.tiers.find(t => t.id === match?.tier_id)?.name} nextMatch={next} open={open} /> })}</div>
+    <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">{data.courts.map(court => { const { current: match, next } = courtSchedule(data.matches, court.id); return <AdminCourtCard key={court.id} court={`${data.venues.find(venue => venue.id === court.venue_id)?.name ?? ''} · ${court.name}`} match={match} tier={data.tiers.find(t => t.id === match?.tier_id)?.name} nextMatch={next} open={open} /> })}</div>
   </div>
 }
 
@@ -171,6 +172,7 @@ function Workspace({ onLogout }: { onLogout: () => void }) {
           <Route path="wasit-preview" element={<RefereePreview />} />
           <Route path="assignments" element={<AssignmentsPage data={data} submit={submit} busy={busy} />} />
           <Route path="master-data" element={<MasterDataPage data={data} />} />
+          <Route path="master-data/venues" element={<VenuesPage data={data} submit={submit} busy={busy} />} />
           <Route path="master-data/courts" element={<CourtsPage data={data} submit={submit} busy={busy} />} />
           <Route path="master-data/referees" element={<RefereesPage data={data} submit={submit} busy={busy} />} />
           <Route path="master-data/presets" element={<PresetsPage data={data} submit={submit} busy={busy} />} />
