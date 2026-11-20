@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-export type Rules = { regular_sets: number; games_to_win: number; golden_point: boolean; deuce_rule?: 'advantage' | 'golden' | 'one_advantage'; tiebreak_at?: number | null; tiebreak_win_by_two?: boolean; tiebreak_points: number; super_points: number }
+export type Rules = { regular_sets: number; games_to_win: number; golden_point: boolean; deuce_rule?: 'advantage' | 'golden' | 'one_advantage'; tiebreak_at?: number | null; tiebreak_win_by_two?: boolean; tiebreak_points: number; super_points: number; super_win_by_two?: boolean }
 export type User = { id: number; name: string; email: string; role: 'admin' | 'referee' }
 export type Venue = { is_active: boolean; id: number; name: string }
 export type Tournament = { venue_id: number | null; id: number; name: string; venue: string; date: string }
@@ -13,7 +13,7 @@ export type BoardStanding = { tier_id: number; tier_name: string; tournament_nam
 export type BoardKnockoutEntry = { team_a: string | null; team_b: string | null; label_a: string; label_b: string; winner: string | null; bye: boolean; status: string; court_name: string | null; sets: number[][]; points: number[]; games: number[]; mode: string }
 export type BoardKnockout = { tier_id: number; tier_name: string; tournament_name: string | null; round_name: string; champion: string | null; entries: BoardKnockoutEntry[] }
 export type Board = { active_venue_id?: number | null; venues?: Venue[]; knockouts?: BoardKnockout[]; standings?: BoardStanding[]; tournaments: Tournament[]; courts: { venue_id?: number | null; venue_name?: string | null; id: number; name: string; match: Match | null; tier: { name: string; tournament_id: number } | null; next_match: Match | null; next_tier: { name: string; tournament_id: number } | null; queue_count: number }[] }
-export const defaults: Rules = { regular_sets: 2, games_to_win: 6, golden_point: false, tiebreak_points: 7, tiebreak_win_by_two: true, super_points: 10 }
+export const defaults: Rules = { regular_sets: 2, games_to_win: 6, golden_point: false, tiebreak_points: 7, tiebreak_win_by_two: true, super_points: 10, super_win_by_two: true }
 export const statuses: Record<string, string> = { scheduled: 'Terjadwal', live: 'Berlangsung', paused: 'Jeda', review: 'Konfirmasi hasil', finished: 'Selesai' }
 export function uid() {
   return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c => (Number(c) ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> Number(c) / 4).toString(16))
@@ -64,7 +64,7 @@ export function isGoldenPoint(match: Match) {
   const threshold = rule === 'golden' ? 3 : rule === 'one_advantage' ? 4 : Infinity
   return match.state.mode === 'regular' && match.state.winner === null && match.state.points[0] === match.state.points[1] && match.state.points[0] >= threshold
 }
-export function rulesLabel(rules: Rules) { return `${rules.regular_sets === 1 ? '1 set' : '2 set + STB ' + rules.super_points} · ${rules.games_to_win} game · ${deuceLabel(rules)} · TB ${rules.tiebreak_at ?? rules.games_to_win}–${rules.tiebreak_at ?? rules.games_to_win}, ${rules.tiebreak_points} poin${rules.tiebreak_win_by_two === false ? ' tanpa selisih 2' : ' selisih 2'}` }
+export function rulesLabel(rules: Rules) { return `${rules.regular_sets === 1 ? '1 set' : `2 set + STB ${rules.super_points}${rules.super_win_by_two === false ? ' tanpa selisih 2' : ' selisih 2'}`} · ${rules.games_to_win} game · ${deuceLabel(rules)} · TB ${rules.tiebreak_at ?? rules.games_to_win}–${rules.tiebreak_at ?? rules.games_to_win}, ${rules.tiebreak_points} poin${rules.tiebreak_win_by_two === false ? ' tanpa selisih 2' : ' selisih 2'}` }
 
 export type Submit = (path: string, body: unknown, method?: string) => Promise<boolean>
 
