@@ -1,0 +1,29 @@
+import { useState } from 'react'
+import type { FormEvent } from 'react'
+import { ArrowUpRight, Plus } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { formValue as field } from '@/lib/padel'
+import type { Data, Submit } from '@/lib/padel'
+import { PageHeader } from '@/components/shared/page-header'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
+import { Field } from './form-fields'
+import { FormDialog, FormSection, ListEmpty, SearchField } from './page-parts'
+
+export function RefereesPage({ data, submit, busy }: { data: Data; submit: Submit; busy: boolean }) {
+  const [open, setOpen] = useState(false)
+  const [search, setSearch] = useState('')
+  const filtered = data.referees.filter(user => `${user.name} ${user.email}`.toLowerCase().includes(search.toLowerCase()))
+  async function save(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const form = new FormData(event.currentTarget)
+    if (await submit('/referees', { name: field(form, 'name'), email: field(form, 'email'), password: String(form.get('password')) })) setOpen(false)
+  }
+  return <div className="space-y-6"><PageHeader title="Wasit" description="Kelola akun wasit yang bertugas mencatat skor di lapangan." action={<Button className="h-9" onClick={() => setOpen(true)}><Plus />Tambah wasit</Button>} />
+    <Card className="gap-0 overflow-hidden"><CardHeader className="gap-4 pb-5"><div><CardTitle>Daftar wasit</CardTitle><CardDescription className="mt-1">{data.referees.length} akun · {data.courts.filter(c => c.referee_id).length} sedang ditugaskan</CardDescription></div><SearchField value={search} onChange={setSearch} placeholder="Cari nama atau email wasit…" /></CardHeader><CardContent className="px-0">{filtered.length ? <Table><TableHeader><TableRow><TableHead className="pl-6">Wasit</TableHead><TableHead>Email login</TableHead><TableHead>Penugasan</TableHead><TableHead className="pr-6 text-right">Aksi</TableHead></TableRow></TableHeader><TableBody>{filtered.map(user => { const court = data.courts.find(c => c.referee_id === user.id); return <TableRow key={user.id}><TableCell className="pl-6"><div className="flex items-center gap-3"><span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium">{user.name.slice(0, 2).toUpperCase()}</span><span className="font-medium">{user.name}</span></div></TableCell><TableCell className="text-muted-foreground">{user.email}</TableCell><TableCell><Badge variant={court ? 'default' : 'secondary'}>{court?.name || 'Belum ditugaskan'}</Badge></TableCell><TableCell className="pr-6 text-right"><Button variant="ghost" size="sm" render={<Link to="/admintempo/assignments" />}>Atur penugasan<ArrowUpRight /></Button></TableCell></TableRow> })}</TableBody></Table> : <ListEmpty title={search ? 'Wasit tidak ditemukan' : 'Belum ada akun wasit'} description={search ? 'Coba gunakan nama atau email lain.' : 'Buat akun agar wasit dapat login dari HP dan mencatat skor.'} />}</CardContent></Card>
+    <FormDialog open={open} onOpenChange={setOpen} title="Tambah wasit" description="Buat akses login untuk petugas pencatat skor." busy={busy} onSubmit={save} submitLabel="Simpan akun wasit"><FormSection title="Identitas wasit"><Field label="Nama lengkap"><Input name="name" required maxLength={100} placeholder="Nama wasit" /></Field><Field label="Email login"><Input name="email" type="email" required placeholder="wasit@turnamen.com" /></Field></FormSection><FormSection title="Akses akun" description="Wasit dapat mengganti password setelah login."><Field label="Password awal"><Input name="password" type="password" autoComplete="new-password" minLength={10} required placeholder="Minimal 10 karakter" /></Field></FormSection></FormDialog>
+  </div>
+}

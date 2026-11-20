@@ -1,6 +1,7 @@
-import { ChevronUp, LogOut, Settings, User } from "lucide-react"
-import { Link, useLocation } from "react-router-dom"
+import { ChevronUp, CircleDot, LogOut, Settings } from "lucide-react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 
+import { TempoLogo } from "@/components/shared/tempo-logo"
 import { appConfig } from "@/config/app"
 import { navigation } from "@/config/navigation"
 
@@ -32,12 +33,19 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar"
 
-export function AppSidebar() {
+import type { User } from "@/lib/padel"
+
+export function AppSidebar({ user, onLogout }: { user?: User; onLogout?: () => void }) {
+    const navigate = useNavigate()
+    const groups = user?.role === "referee" ? [
+        { title: "Pertandingan", items: [{ title: "Court saya", href: "/admintempo", icon: CircleDot }] },
+        ...navigation.filter(group => group.title === "System"),
+    ] : navigation
     const location = useLocation()
 
     const isActive = (href: string) => {
-        if (href === "/dashboard") {
-            return location.pathname === "/dashboard"
+        if (href === "/admintempo/dashboard" || href === "/admintempo") {
+            return location.pathname.replace(/\/$/, "") === href
         }
 
         return (
@@ -51,37 +59,24 @@ export function AppSidebar() {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <Link
-                            to="/dashboard"
-                            className="block"
-                        >
                             <SidebarMenuButton
+                                render={<Link to={user?.role === "referee" ? "/admintempo" : "/admintempo/dashboard"} />}
                                 size="lg"
+                                className="h-auto min-h-12 py-2"
                                 tooltip={appConfig.name}
                             >
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                                    <span className="text-sm font-semibold">
-                                        {appConfig.logo}
-                                    </span>
-                                </div>
-
-                                <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-semibold">
-                                        {appConfig.name}
-                                    </span>
-
-                                    <span className="truncate text-xs text-muted-foreground">
-                                        {appConfig.description}
-                                    </span>
+                                <div className="flex min-w-0 flex-1 flex-col gap-1 group-data-[collapsible=icon]:items-center">
+                                    <div className="flex h-7 w-28 max-w-full items-center group-data-[collapsible=icon]:size-8">
+                                        <TempoLogo className="w-full" />
+                                    </div>
                                 </div>
                             </SidebarMenuButton>
-                        </Link>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
 
             <SidebarContent>
-                {navigation.map((group) => (
+                {groups.map((group) => (
                     <SidebarGroup key={group.title}>
                         <SidebarGroupLabel>
                             {group.title}
@@ -95,11 +90,8 @@ export function AppSidebar() {
 
                                     return (
                                         <SidebarMenuItem key={item.href}>
-                                            <Link
-                                                to={item.href}
-                                                className="block"
-                                            >
                                                 <SidebarMenuButton
+                                                    render={<Link to={item.href} />}
                                                     isActive={active}
                                                     tooltip={item.title}
                                                 >
@@ -109,7 +101,6 @@ export function AppSidebar() {
                                                         {item.title}
                                                     </span>
                                                 </SidebarMenuButton>
-                                            </Link>
                                         </SidebarMenuItem>
                                     )
                                 })}
@@ -123,29 +114,24 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <DropdownMenu>
-                            <DropdownMenuTrigger className="w-full">
-                                <SidebarMenuButton
-                                    size="lg"
-                                    className="w-full"
-                                >
+                            <DropdownMenuTrigger render={<SidebarMenuButton size="lg" className="w-full" />}>
                                     <Avatar className="size-8 rounded-lg">
                                         <AvatarFallback className="rounded-lg">
-                                            AD
+                                            {user?.name.slice(0, 2).toUpperCase() || "AD"}
                                         </AvatarFallback>
                                     </Avatar>
 
                                     <div className="grid flex-1 text-left text-sm leading-tight">
                                         <span className="truncate font-semibold">
-                                            Administrator
+                                            {user?.name || "Administrator"}
                                         </span>
 
                                         <span className="truncate text-xs text-muted-foreground">
-                                            admin@example.com
+                                            {user?.email || ""}
                                         </span>
                                     </div>
 
                                     <ChevronUp className="ml-auto size-4" />
-                                </SidebarMenuButton>
                             </DropdownMenuTrigger>
 
                             <DropdownMenuContent
@@ -159,19 +145,14 @@ export function AppSidebar() {
 
                                 <DropdownMenuSeparator />
 
-                                <DropdownMenuItem>
-                                    <User className="size-4" />
-                                    Profile
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => navigate("/admintempo/account")}>
                                     <Settings className="size-4" />
-                                    Settings
+                                    Pengaturan akun
                                 </DropdownMenuItem>
 
                                 <DropdownMenuSeparator />
 
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={onLogout}>
                                     <LogOut className="size-4" />
                                     Logout
                                 </DropdownMenuItem>

@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { Bell, Moon, Search, Sun } from "lucide-react"
+import { Monitor, Moon, Sun } from "lucide-react"
+import type { ReactNode } from "react"
 import { useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -8,7 +9,7 @@ import { AppBreadcrumb } from "@/components/layout/app-breadcrumb"
 
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
-export function AppHeader() {
+export function AppHeader({ action }: { action?: ReactNode }) {
     const [isDark, setIsDark] = useState(false)
 
     useEffect(() => {
@@ -44,25 +45,9 @@ export function AppHeader() {
             <AppBreadcrumb />
 
             <div className="ml-auto flex items-center gap-1">
-                <Button
-                    variant="outline"
-                    className="hidden h-9 w-52 justify-start text-muted-foreground md:flex lg:w-60"
-                >
-                    <Search className="mr-2 size-4" />
-
-                    <span>Search...</span>
-
-                    <kbd className="ml-auto rounded border border-border/50 bg-muted px-1.5 text-[10px]">
-                        ⌘ K
-                    </kbd>
-                </Button>
-
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Notifications"
-                >
-                    <Bell className="size-4" />
+                <div className="hidden sm:block">{action}</div>
+                <Button variant="ghost" size="icon" aria-label="Buka layar TV" render={<a href="/" target="_blank" rel="noreferrer" />}>
+                    <Monitor className="size-4" />
                 </Button>
 
                 <Button

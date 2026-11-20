@@ -10,7 +10,20 @@ import {
 } from "@/components/ui/breadcrumb"
 
 const labels: Record<string, string> = {
+    admintempo: "Admin Tempo",
     dashboard: "Dashboard",
+    progression: "Klasemen & knockout",
+    competitions: "Turnamen & tier",
+    "master-data": "Master Data",
+    tournaments: "Turnamen",
+    tiers: "Tier & grup",
+    courts: "Court",
+    assignments: "Penugasan wasit",
+    "wasit-preview": "Pratinjau wasit",
+    matches: "Jadwal & hasil",
+    referees: "Wasit",
+    presets: "Preset skor",
+    account: "Pengaturan akun",
     customers: "Customers",
     products: "Products",
     orders: "Orders",
@@ -64,7 +77,7 @@ export function AppBreadcrumb() {
                         >
                             <BreadcrumbItem>
                                 {isLast ? (
-                                    <BreadcrumbPage>
+                                    <BreadcrumbPage className="block max-w-44 truncate sm:max-w-none">
                                         {label}
                                     </BreadcrumbPage>
                                 ) : (

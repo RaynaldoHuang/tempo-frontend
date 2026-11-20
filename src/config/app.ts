@@ -1,5 +1,7 @@
+import tempoLogo from "@/assets/logotempo.webp"
+
 export const appConfig = {
-  name: "RAY Admin",
-  description: "Admin Workspace",
-  logo: "R",
+  name: "Tempo",
+  description: "Padel Tournament",
+  logo: tempoLogo,
 }
