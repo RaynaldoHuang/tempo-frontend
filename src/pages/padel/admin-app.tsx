@@ -163,7 +163,7 @@ function Workspace({ onLogout }: { onLogout: () => void }) {
   const assigned = data.courts.find(c => c.referee_id === data.user.id)
   const refCurrent = courtSchedule(queueMatches(data), assigned?.id).current
   const refMatch = refCurrent?.status === 'finished' ? undefined : refCurrent
-  return <AdminLayout user={data.user} onLogout={() => void logout()} headerAction={<Connection error={error} updated={updated} />}>
+  return <AdminLayout user={data.user} onLogout={logout} headerAction={<Connection error={error} updated={updated} />}>
     <div className="space-y-6">
       {error && <Alert variant="destructive"><AlertDescription>{error}. Tampilan menggunakan data terakhir; input skor dikunci sampai tersambung.</AlertDescription></Alert>}
       <Suspense fallback={<RouteLoading />}><Routes>

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { Monitor, Moon, Sun } from "lucide-react"
+import { LogOut, Monitor, Moon, Sun } from "lucide-react"
 import type { ReactNode } from "react"
 import { useEffect, useState } from "react"
 
@@ -9,7 +9,7 @@ import { AppBreadcrumb } from "@/components/layout/app-breadcrumb"
 
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
-export function AppHeader({ action }: { action?: ReactNode }) {
+export function AppHeader({ action, onLogout }: { action?: ReactNode; onLogout?: () => void }) {
     const [isDark, setIsDark] = useState(false)
 
     useEffect(() => {
@@ -46,9 +46,11 @@ export function AppHeader({ action }: { action?: ReactNode }) {
 
             <div className="ml-auto flex items-center gap-1">
                 <div className="hidden sm:block">{action}</div>
-                <Button variant="ghost" size="icon" aria-label="Buka layar TV" render={<a href="/" target="_blank" rel="noreferrer" />}>
+                {onLogout ? <Button variant="ghost" size="icon" aria-label="Logout" title="Logout" onClick={onLogout}>
+                    <LogOut className="size-4" />
+                </Button> : <Button variant="ghost" size="icon" aria-label="Buka layar TV" render={<a href="/" target="_blank" rel="noreferrer" />}>
                     <Monitor className="size-4" />
-                </Button>
+                </Button>}
 
                 <Button
                     variant="ghost"
