@@ -1,7 +1,7 @@
 import { uid } from '@/lib/padel'
 
-export type PlayerPair = { id: string; players: [string, string] }
-export type ParticipantGroup = { id: string; pairs: PlayerPair[] }
+export type PlayerPair = { id: string; players: [string, string]; originalTeam?: string; originalPlayers?: [string, string] }
+export type ParticipantGroup = { id: string; name?: string; pairs: PlayerPair[] }
 export const newPair = (): PlayerPair => ({ id: uid(), players: ['', ''] })
 export const newGroup = (): ParticipantGroup => ({ id: uid(), pairs: [newPair(), newPair()] })
 const normalize = (name: string) => name.trim().replace(/\s+/g, ' ').toLocaleLowerCase('id-ID')
@@ -20,4 +20,15 @@ export function participantErrors(groups: ParticipantGroup[]) {
     else if ((counts.get(normalize(name)) ?? 0) > 1) errors[`${pair.id}-${index}`] = 'Nama sudah digunakan. Tambahkan pembeda jika orangnya berbeda.'
   })
   return errors
+}
+
+export function editableGroups(groups: { name: string; teams: string[] }[]): ParticipantGroup[] {
+  return groups.map(group => ({ id: uid(), name: group.name, pairs: group.teams.map(team => {
+    const separator = team.indexOf('/')
+    const players: [string, string] = separator < 0 ? [team, ''] : [team.slice(0, separator).trim(), team.slice(separator + 1).trim()]
+    return { id: uid(), players, originalPlayers: [...players], originalTeam: team }
+  }) }))
+}
+export function serializeGroups(groups: ParticipantGroup[], format: string) {
+  return groups.map((group, index) => ({ name: group.name ?? groupLabel(index, format), teams: group.pairs.map(pair => pair.originalTeam && pair.originalPlayers?.every((player, index) => player === pair.players[index]) ? pair.originalTeam : pair.players.map(name => name.trim().replace(/\s+/g, ' ')).filter(Boolean).join(' / ')) }))
 }
