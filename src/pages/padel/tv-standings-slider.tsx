@@ -1,18 +1,26 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { ChevronLeft, ChevronRight, Check, Layers, Trophy, Pause, Play } from 'lucide-react'
 import { statuses } from '@/lib/padel'
 import type { BoardStanding, BoardKnockout, BoardKnockoutEntry } from '@/lib/padel'
 
 export function TVStandingsSlider({ standings, knockouts, connection }: { standings: BoardStanding[]; knockouts: BoardKnockout[]; connection: ReactNode }) {
-  const [pageSize, setPageSize] = useState(() => window.innerWidth > 900 ? (window.innerHeight <= 700 ? 2 : window.innerHeight <= 900 ? 3 : 4) : 4)
+  const containerRef = useRef<HTMLElement>(null)
+  const [pageSize, setPageSize] = useState(4)
+  const [matchesPerPage, setMatchesPerPage] = useState(2)
   useEffect(() => {
-    const resize = () => setPageSize(window.innerWidth > 900 ? (window.innerHeight <= 700 ? 2 : window.innerHeight <= 900 ? 3 : 4) : 4)
-    window.addEventListener('resize', resize)
-    return () => window.removeEventListener('resize', resize)
+    const container = containerRef.current
+    if (!container) return
+    const observer = new ResizeObserver(([entry]) => {
+      const height = entry.contentRect.height
+      if (height <= 0) return
+      setPageSize(height < 270 ? 2 : height < 380 ? 3 : 4)
+      setMatchesPerPage(height < 360 ? 1 : 2)
+    })
+    observer.observe(container)
+    return () => observer.disconnect()
   }, [])
   const groupSlides = standings.flatMap(group => Array.from({ length: Math.ceil(group.rows.length / pageSize) }, (_, page) => ({ kind: 'group' as const, id: `${group.tier_id}:${group.group_name}:${pageSize}:${page}`, group, page, rows: group.rows.slice(page * pageSize, page * pageSize + pageSize), pages: Math.ceil(group.rows.length / pageSize) })))
-  const matchesPerPage = pageSize === 2 ? 1 : 2
   const knockoutSlides = knockouts.flatMap(bracket => Array.from({ length: bracket.champion ? 1 : Math.ceil(bracket.entries.length / matchesPerPage) }, (_, page) => ({ kind: 'knockout' as const, id: `ko:${bracket.tier_id}:${bracket.champion ? 'champion' : bracket.round_name}:${matchesPerPage}:${page}`, bracket, page, entries: bracket.entries.slice(page * matchesPerPage, page * matchesPerPage + matchesPerPage), pages: bracket.champion ? 1 : Math.ceil(bracket.entries.length / matchesPerPage) })))
   const slides = [...groupSlides, ...knockoutSlides]
   const [activeId, setActiveId] = useState('')
@@ -32,7 +40,7 @@ export function TVStandingsSlider({ standings, knockouts, connection }: { standi
   function navigate(direction: number) {
     if (slides.length > 1) setActiveId(slides[(index + direction + slides.length) % slides.length].id)
   }
-  return <article className="tv-standings" aria-roledescription="carousel" aria-label="Klasemen dan pertandingan knockout" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false) }}>
+  return <article ref={containerRef} className="tv-standings" aria-roledescription="carousel" aria-label="Klasemen dan pertandingan knockout" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false) }}>
     <header className="tv-standings-heading"><span>{current?.kind === 'knockout' ? <><Trophy />KNOCKOUT</> : <><Layers />KLASEMEN GRUP</>}</span><span className="tv-standings-status">{current?.kind === 'knockout' ? current.bracket.champion ? 'JUARA' : 'BABAK AKTIF' : 'SEMENTARA'}</span></header>
     {current?.kind === 'knockout' ? <section key={current.id} className="tv-standings-slide" aria-roledescription="slide" aria-label={`${index + 1} dari ${slides.length}`}><div className="tv-standings-title"><p>{current.bracket.tournament_name} · {current.bracket.tier_name}</p><div><h2>{current.bracket.champion ? 'Juara turnamen' : current.bracket.round_name}</h2>{current.pages > 1 && <span>{current.page + 1}/{current.pages}</span>}</div></div>{current.bracket.champion ? <div className="tv-ko-champion"><Trophy /><p>{current.bracket.champion}</p><span>{current.bracket.tier_name} · Pemenang final</span></div> : <div className="tv-ko-list">{current.entries.map((entry, entryIndex) => <KnockoutPairing key={entryIndex} entry={entry} number={current.page * matchesPerPage + entryIndex + 1} />)}</div>}<p className="tv-standings-note"><i />{current.bracket.champion ? 'Hasil final terkonfirmasi' : 'Pemenang maju setelah hasil dikonfirmasi'}</p></section> : current ? <section key={current.id} className="tv-standings-slide" aria-roledescription="slide" aria-label={`${index + 1} dari ${slides.length}`}><div className="tv-standings-title"><p title={current.group.tournament_name ?? ''}>{current.group.tournament_name} · {current.group.tier_name}</p><div><h2>{current.group.group_name}</h2>{current.pages > 1 && <span>{current.page + 1}/{current.pages}</span>}</div></div>
       <div className="tv-standings-table-wrap"><table className="tv-standings-table"><thead><tr><th scope="col">#</th><th scope="col">PASANGAN</th><th scope="col" title="Pertandingan dimainkan">M</th><th scope="col" title="Kemenangan">W</th><th scope="col" title="Selisih set">Δ S</th><th scope="col" title="Selisih game">Δ G</th></tr></thead><tbody>{current.rows.map((row, rowIndex) => { const rank = current.page * pageSize + rowIndex + 1; return <tr key={row.team} className={rank <= current.group.qualifiers ? 'tv-qualifying' : ''}><td><span className="tv-rank">{rank}</span></td><th scope="row" title={row.team}><span>{row.team}</span></th><td>{row.played}</td><td className="tv-wins">{row.wins}</td><td>{row.sets > 0 ? '+' : ''}{row.sets}</td><td>{row.games > 0 ? '+' : ''}{row.games}</td></tr> })}</tbody></table></div>

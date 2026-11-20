@@ -1,0 +1,79 @@
+/* Size each card from the available viewport, including short laptop screens. */
+.padel-live .tv-page.tv-page-fit {
+  --tv-page-gutter: clamp(8px, 1.5vh, 22px);
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  gap: clamp(6px, 1.2vh, 16px);
+}
+.padel-live .tv-page-fit .tv-header { flex-shrink: 0; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); gap: 12px; padding-bottom: clamp(6px, 1.2vh, 16px); }
+.padel-live .tv-page-fit .tv-title { grid-column: auto; grid-row: auto; text-align: center; }
+.padel-live .tv-page-fit .tv-title h1 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: clamp(16px, min(1.7vw, 3vh), 38px); }
+.padel-live .tv-page-fit .tv-active-venue, .padel-live .tv-page-fit .tv-venue-select { margin-top: 3px; font-size: clamp(10px, 1.5vh, 16px); }
+.padel-live .tv-page-fit .brand { width: clamp(75px, 6vw, 140px); }
+.padel-live .tv-page-fit .tv-clock { gap: 8px; }
+.padel-live .tv-page-fit .tv-clock strong { font-size: clamp(14px, min(1.4vw, 2.6vh), 32px); }
+.padel-live .tv-page-fit .icon-btn { width: 28px; height: 28px; }
+.padel-live .tv-page-fit .tv-grid-fit { flex: 1; min-height: 0; grid-auto-rows: auto; gap: clamp(6px, 1.1vh, 16px); }
+.padel-live .tv-page-fit .tv-cell { display: contents; }
+.padel-live .tv-page-fit .tv-cell[hidden] { display: none; }
+.padel-live .tv-page-fit .court-card, .padel-live .tv-page-fit .tv-standings { container-type: size; min-height: 0; }
+.padel-live .tv-page-fit .court-card {
+  --tv-team-size: clamp(10px, min(4.5cqw, 5.8cqh), 28px);
+  --tv-point-size: clamp(22px, min(14cqw, 14cqh), 76px);
+  --tv-score-row-min: 0px;
+  --tv-score-columns: minmax(0, 1fr) 17cqw 12cqw 19cqw;
+}
+.padel-live .tv-page-fit .court-card > header { padding: clamp(5px, 2.5cqh, 18px) 4cqw; gap: 6px; }
+.padel-live .tv-page-fit .court-name { min-width: 0; font-size: clamp(12px, min(5cqw, 6cqh), 30px); line-height: 1.2; }
+.padel-live .tv-page-fit .court-name svg { width: 4cqw; height: 4cqw; flex-shrink: 0; }
+.padel-live .tv-page-fit .tag, .padel-live .tv-page-fit .idle-label { padding: 3px 5px; font-size: clamp(7px, min(2.6cqw, 3.3cqh), 13px); }
+.padel-live .tv-page-fit .court-meta { padding: 2cqh 4cqw 0; font-size: clamp(8px, min(3cqw, 4cqh), 17px); line-height: 1.2; }
+.padel-live .tv-page-fit .court-scoreboard { flex: 1 1 0; min-height: 0; grid-template-rows: auto repeat(2, minmax(0, 1fr)); }
+.padel-live .tv-page-fit .score-labels, .padel-live .tv-page-fit .score-row { grid-template-columns: var(--tv-score-columns); padding-inline: 4cqw; gap: 1cqw; }
+.padel-live .tv-page-fit .score-labels { padding-top: 1.8cqh; padding-bottom: 1cqh; font-size: clamp(7px, min(2.4cqw, 3cqh), 13px); line-height: 1.2; }
+.padel-live .tv-page-fit .score-row { min-height: 0; padding-block: 1cqh; }
+.padel-live .tv-page-fit .team-name { gap: 1.5cqw; line-height: 1.2; }
+.padel-live .tv-page-fit .team-label { max-height: 2.4em; }
+.padel-live .tv-page-fit .serve-dot { width: 1.5cqw; height: 1.5cqw; }
+.padel-live .tv-page-fit .set-scores { gap: 1cqw; font-size: var(--tv-team-size); line-height: 1.1; }
+.padel-live .tv-page-fit .game-score { font-size: clamp(18px, min(8cqw, 10cqh), 44px); line-height: 1; }
+.padel-live .tv-page-fit .point-score { font-size: var(--tv-point-size); min-height: 1.1em; border-radius: 6px; }
+.padel-live .tv-page-fit .court-card > footer { margin-top: 0; padding: 1.8cqh 4cqw; font-size: clamp(7px, min(2.8cqw, 3.4cqh), 15px); line-height: 1.2; }
+.padel-live .tv-page-fit .court-card > footer > span { min-width: 0; text-align: right; }
+.padel-live .tv-page-fit .court-next { height: 23cqh; padding: 2cqh 4cqw; overflow: hidden; }
+.padel-live .tv-page-fit .next-heading { margin-bottom: 1cqh; }
+.padel-live .tv-page-fit .next-heading > span, .padel-live .tv-page-fit .next-heading > small { font-size: clamp(7px, min(2.6cqw, 3cqh), 13px); line-height: 1.2; }
+.padel-live .tv-page-fit .next-teams { gap: 1.5cqw; font-size: clamp(9px, min(3.2cqw, 3.9cqh), 20px); line-height: 1.2; }
+.padel-live .tv-page-fit .next-meta, .padel-live .tv-page-fit .next-empty { margin-top: 1cqh; font-size: clamp(8px, min(2.6cqw, 3cqh), 14px); line-height: 1.2; }
+.padel-live .tv-page-fit .court-idle { gap: 2cqh; padding: 4cqh 4cqw; }
+.padel-live .tv-page-fit .court-idle p { font-size: clamp(12px, min(4cqw, 6cqh), 24px); }
+.padel-live .tv-page-fit .court-idle small { font-size: clamp(9px, min(3cqw, 4cqh), 16px); }
+.padel-live .tv-page-fit .tv-standings-heading { padding: 2.5cqh 4cqw; }
+.padel-live .tv-page-fit .tv-standings-heading > span:first-child { font-size: clamp(8px, min(3cqw, 4cqh), 16px); }
+.padel-live .tv-page-fit .tv-standings-status { font-size: clamp(7px, 2.4cqh, 12px); }
+.padel-live .tv-page-fit .tv-standings-slide { padding-inline: 4cqw; }
+.padel-live .tv-page-fit .tv-standings-title { padding-block: 2cqh; }
+.padel-live .tv-page-fit .tv-standings-title > p { font-size: clamp(8px, 3cqh, 15px); }
+.padel-live .tv-page-fit .tv-standings-title h2 { font-size: clamp(16px, min(6cqw, 7cqh), 30px); }
+.padel-live .tv-page-fit .tv-standings-table thead { height: 6cqh; }
+.padel-live .tv-page-fit .tv-standings-table th, .padel-live .tv-page-fit .tv-standings-table td { padding-block: 1cqh; }
+.padel-live .tv-page-fit .tv-standings-table tbody th { font-size: clamp(9px, min(3.6cqw, 4cqh), 20px); }
+.padel-live .tv-page-fit .tv-standings-table td { font-size: clamp(9px, min(3.4cqw, 3.8cqh), 18px); }
+.padel-live .tv-page-fit .tv-standings-note { padding-block: 1.5cqh; font-size: clamp(7px, 2.8cqh, 13px); }
+.padel-live .tv-page-fit .tv-standings-footer { flex-wrap: nowrap; min-height: 28px; padding: 1cqh 3cqw; }
+.padel-live .tv-page-fit .tv-standings-connection > span { font-size: clamp(7px, min(2.4cqw, 2.8cqh), 12px); }
+.padel-live .tv-page-fit .tv-ko-list { gap: 2cqh; }
+.padel-live .tv-page-fit .tv-ko-match > header { padding: 1cqh 2cqw; font-size: clamp(7px, 2.8cqh, 12px); }
+.padel-live .tv-page-fit .tv-ko-team { padding: 1cqh 2cqw; font-size: clamp(9px, min(3.5cqw, 4cqh), 20px); }
+.padel-live .tv-page-fit .tv-footer { flex-wrap: nowrap; gap: 8px; font-size: clamp(8px, 1.3vh, 13px); line-height: 1.2; }
+.padel-live .tv-page-fit .error-banner { padding: 4px 8px; font-size: clamp(9px, 1.5vh, 14px); line-height: 1.2; }
+.padel-live .tv-page-controls { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.padel-live .tv-page-controls button { display: grid; place-items: center; width: 24px; height: 24px; border: 1px solid var(--tv-border); border-radius: 5px; background: #fff; color: var(--tv-secondary); }
+.padel-live .tv-page-controls svg { width: 12px; height: 12px; }
+@container (max-height: 280px) { .padel-live .tv-page-fit .next-meta { display: none; } }
+@media (max-width: 600px) {
+  .padel-live .tv-page-fit .tv-header { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .padel-live .tv-page-fit .tv-title { grid-column: 1 / -1; grid-row: 2; }
+  .padel-live .tv-page-fit .tv-footer > span:nth-of-type(2) { display: none; }
+}
