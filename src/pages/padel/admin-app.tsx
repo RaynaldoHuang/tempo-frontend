@@ -171,7 +171,7 @@ function Workspace({ onLogout }: { onLogout: () => void }) {
           <Route path="wasit-preview" element={<RefereePreview />} />
           <Route path="assignments" element={<AssignmentsPage data={data} submit={submit} busy={busy} />} />
           <Route path="master-data" element={<MasterDataPage data={data} />} />
-          <Route path="master-data/courts" element={<CourtsPage data={data} />} />
+          <Route path="master-data/courts" element={<CourtsPage data={data} submit={submit} busy={busy} />} />
           <Route path="master-data/referees" element={<RefereesPage data={data} submit={submit} busy={busy} />} />
           <Route path="master-data/presets" element={<PresetsPage data={data} submit={submit} busy={busy} />} />
           <Route path="competitions" element={<Navigate to="/admintempo/tournaments" replace />} />
