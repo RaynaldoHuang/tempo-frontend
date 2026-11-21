@@ -1,3 +1,4 @@
+import { ReportExport } from './report-export'
 import { formValue as field } from '@/lib/padel'
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
@@ -117,7 +118,7 @@ function AdminCourtCard({ court, match, tier, open, nextMatch }: { court: string
 }
 function Overview({ data, open }: { data: Data; open: (id: number) => void }) {
   const active = data.matches.filter(m => ['live', 'paused'].includes(m.status))
-  return <div className="space-y-6"><PageHeader title="Dashboard" description="Pantau pertandingan, penugasan, dan skor setiap court." action={<Button className="h-9" render={<a href="/" target="_blank" rel="noreferrer" />}><Monitor />Buka layar TV</Button>} />
+  return <div className="space-y-6"><PageHeader title="Dashboard" description="Pantau pertandingan, penugasan, dan skor setiap court." action={<div className="flex flex-wrap gap-2"><ReportExport data={data} /><Button className="h-9" render={<a href="/" target="_blank" rel="noreferrer" />}><Monitor />Buka layar TV</Button></div>} />
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><StatCard title="Total court" value={String(data.courts.length)} icon={LayoutDashboard} /><StatCard title="Sedang bertanding" value={String(active.length)} icon={Activity} /><StatCard title="Pertandingan selesai" value={String(data.matches.filter(m => m.status === 'finished').length)} icon={ShieldCheck} /><StatCard title="Total pertandingan" value={String(data.matches.length)} icon={ClipboardList} /></div>
     {!data.tournaments.length && <Card><CardContent className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center"><div><h2 className="text-sm font-semibold">Siapkan turnamen pertama</h2><p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground">Mulai dari turnamen, tambahkan tier dan peserta, lalu tempatkan pertandingan serta wasit ke court.</p></div><Button variant="outline" className="h-9 shrink-0" render={<Link to="/admintempo/tournaments" />}>Buat turnamen<ArrowRight /></Button></CardContent></Card>}
     <div className="flex items-center justify-between gap-4"><div><h2 className="text-lg font-semibold tracking-tight">Live courts</h2><p className="mt-1 text-sm text-muted-foreground">Pantau skor dan kesiapan setiap lapangan.</p></div><Badge variant="outline"><Radio className="size-3" />{data.courts.length} court</Badge></div>
